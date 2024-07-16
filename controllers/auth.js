@@ -36,7 +36,7 @@ exports.signup = async(req,res)=>{
 
         //create entry for user
         const user = await User.create({
-            name,email,password:hashedPassword,role
+            name,email,password:hashedPassword,role,
         });
 
         return res.status(200).json({
@@ -46,7 +46,7 @@ exports.signup = async(req,res)=>{
 
     }
     catch(err){
-        console.error(error);
+        console.error(err);
         return res.status(500).json({
             success:false,
             message:"User cannot be registered! Please try again later.",
