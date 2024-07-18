@@ -103,6 +103,16 @@ exports.login = async (req,res) => {
                                     expiresIn:"2hrs",
                                 });
 
+            //user.token = token;
+            //user.password = undefined;        these two methods didn't showed token and password while loggin in
+            
+            // const oldUser = {...user,password};
+            // oldUser.password = undefined;
+            // oldUser.token = token;
+            // console.log(oldUser);                these methods worked
+
+            //another method to show token and password
+            user = user.toObject();
             user.token = token;
             user.password = undefined;
 
@@ -111,7 +121,7 @@ exports.login = async (req,res) => {
                 httpOnly:true,
             };
 
-            res.cookie("token",token,options).status(200).json({
+            res.cookie("babbarcookie",token,options).status(200).json({
                 success:true,
                 token,
                 user, 
