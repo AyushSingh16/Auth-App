@@ -9,6 +9,9 @@ const PORT = process.env.PORT || 4000;
 app.use(express.json());
 
 
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 require("./config/database").connect();
 
 
@@ -17,6 +20,6 @@ require("./config/database").connect();
 const user = require("./routes/user");
 app.use("/api/v1",user);
 
-app.listen(PORT,() => {
+app.listen(PORT,  () => {
     console.log(`App is listening at ${PORT}`);
 })
