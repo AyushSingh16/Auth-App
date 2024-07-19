@@ -1,87 +1,82 @@
-// auth, isStudent, isAdmin
-
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken")
 require("dotenv").config();
 
 
-exports.auth = async (req,res,next) => {                        
-    
+exports.auth = (req, res, next) => {
     try {
-        
-        //extract the jwt token             Can be extracted by 3 ways:header of jwt,cookie, req.body
-        const token = req.body.token;       //req.body.token || cookie.token || jwt.header.token
 
-        if(!token){
+        // console.log("Body", req.body.token);
+        // console.log("Cookies", req.cookies.token);
+        // console.log("Header", req.header("Authorization").replace("Bearer", " "));
+
+        // const token = req.body.token;
+        // const token = req.cookie.token 
+        const token = req.body.token || req.cookies.token || req.header("Authorization").replace("Bearer ", "");
+
+        if(!token || token === undefined) {
             return res.status(401).json({
                 success:false,
-                message:"Token missing",
+                message:'Token Missing',
             });
         }
-
-        //verifying the token
+        // verify the token 
         try {
-          
-            const payload = jwt.verify(token,process.env.JWT_SECRET); 
-            console.log(payload);
+            const decode = jwt.verify(token, process.env.JWT_SECRET);
 
-            req.user = payload;          //to check the authenticity
+            console.log(decode)
 
-
-        } catch(error){
+            req.user = decode;
+        }
+        catch (e) {
             return res.status(401).json({
                 success: false,
-                message:"Token is invalid!", 
-            });
+                message: "token is invalid"
+            })
         }
 
         next();
-
-    } catch (error) {
-            return res.status(401).json({
-                success:false,
-                message:"Something went wrong, while verifying the token!",
-            });
     }
-
-};
-
-
-
-
-exports.isStudent = async (req,res,next) => {
-    try {
-
-        if(req.user.role !== "Student"){
-            return res.status(401).json({
-                success:false,
-                message:"This is a protected route for student!",
-            });
-        }
-        next();
-
-    } catch (error) {
-        return res.status(500).json({
-            success:false,
-            message:"User role is not matching",
-        });
+    catch (err) {
+        console.log(err)
+        return res.status(401).json({
+            success: false,
+            message: "Something went wrong while verifying token"
+        })
     }
 }
 
-
-exports.isAdmin = async(req,res,next) => {
+exports.isStudent = (req, res, next) => {
     try {
-        if(req.user.role !== "Admin"){
+        if (req.user.role !== "Student") {
             return res.status(401).json({
-                success:false,
-                message:"This is a protected route for Admin!",
-            });
+                success: false,
+                message: "This is a protect route for students you can not access it"
+            })
         }
         next();
-
-    } catch (error) {
+    }
+    catch (err) {
         return res.status(500).json({
-            success:false,
-            message:"User role is not matching",
-        });
+            success: false,
+            message: "User Role is not Matching"
+        })
+    }
+}
+
+exports.isAdmin = (req, res, next) => {
+    try {
+        if (req.user.role !== "Admin") {
+            return res.status(401).json({
+                success: false,
+                message: "This is a protect route for Admins,you can not access it"
+            })
+        }
+        next();
+    }
+    catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "User Role is not Matching"
+        })
     }
 }
