@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 
 const User = require("../models/user");
 
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken")
 
 require("dotenv").config();
 
@@ -46,6 +46,7 @@ exports.signup = async(req,res)=>{
         return res.status(200).json({
             success:true,
             message:"User created successfully",
+            data:user
         });
 
     }
@@ -88,9 +89,9 @@ exports.login = async (req,res) => {
         }
 
         const payload = {
-            email:user.email,
-            id:user._id,
-            role:user.role,
+            email: user.email,
+            id: user._id,
+            role: user.role,
         };
 
         //verify password and generate a JWT token
@@ -121,13 +122,19 @@ exports.login = async (req,res) => {
                 httpOnly:true,
             };
 
-            res.cookie("babbarcookie",token,options).status(200).json({
+            res.cookie("token",token,options).status(200).json({
                 success:true,
                 token,
                 user, 
                 message:"User Logged In successfully!",
             });
 
+            // res.status(200).json({
+            //     success:true,
+            //     token,
+            //     user, 
+            //     message:"User Logged In successfully!",
+            // });
 
         }
         else{
